@@ -1,9 +1,5 @@
 #!/bin/bash
 
-LG="\e[92m"
-WHITE="\e[97m"
-ET="\e[0m"
-
 echo -e "
 \e[1\e[4;\e[92mStarting Python Web Server\e[0m
 "
