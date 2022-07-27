@@ -1,14 +1,11 @@
 #!/bin/bash
 
 echo -e "
-\e[1\e[4;\e[92mStarting Python Web Server\e[0m
+Starting Python Web Server
 "
 
-CURRECT_FOLDER=$PWD
 
-echo $CURRECT_FOLDER
-
-read -e -p "Select the directory to place scan results ($CURRECT_FOLDER): " SELECTED_FOLDER && [  -z "$SELECTED_FOLDER" ] && SELECTED_FOLDER=${CURRECT_FOLDER} 
+read -e -p "Select the directory to place scan results ($PWD): " SELECTED_FOLDER && [  -z "$SELECTED_FOLDER" ] && SELECTED_FOLDER=$PWD 
 read -p "Select the server port: (9000): " SELECTED_PORT && [ -z "$SELECTED_PORT" ] && SELECTED_PORT=9000
 
 python3 -m http.server $SELECTED_PORT --directory $SELECTED_FOLDER
