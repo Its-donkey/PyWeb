@@ -1,7 +1,7 @@
 #!/bin/sh
 
 while :; do
-	case $1 in
+	case $* in
 		-q|--quick) 
 			python3 -m http.server 9000 --directory \
 			$PWD 
