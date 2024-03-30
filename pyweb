@@ -1,34 +1,56 @@
 #!/bin/sh
 
-while :; do
-	case $* in
-		-q|--quick) 
-			python3 -m http.server 9000 --directory \
-			$PWD 
-			exit 			
-			;;
-		--)		#End of all options.
-			shift
-			break
-			;;
-		*)		# Default case: No more options, 
-				# so break out of the loop.
-			break
-	esac
+SELECTED_PORT=9000
+SELECTED_FOLDER=$PWD
 
-	shift
+print_help() {
+    echo "Usage: $0 [options]"
+    echo "Options:"
+    echo "  -q, --quick    Start server quickly with default options"
+    echo "  -h, --help     Display this help and exit"
+}
+
+start_server() {
+    echo "\nStarting Python Web Server\n"
+    python3 -m http.server "$SELECTED_PORT" --directory "$SELECTED_FOLDER"
+    exit
+}
+
+# Check for python3
+if ! command -v python3 > /dev/null 2>&1; then
+    echo "Error: python3 is not installed." >&2
+    exit 1
+fi
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -q|--quick)
+            start_server
+            ;;
+        -h|--help)
+            print_help
+            exit
+            ;;
+        --)
+            shift
+            break
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
 done
 
+### INTERACTIVE SETUP
 # Set the parent folder of the http server. If left blank it will set the 
 # current folder as parent.
-read -e -p "Select the directory to place scan results ($PWD): " \
-	SELECTED_FOLDER && [  -z "$SELECTED_FOLDER" ] && SELECTED_FOLDER=$PWD 
+read -e -p "Select the directory to place scan results ($PWD): " INPUT_FOLDER
+[ -n "$INPUT_FOLDER" ] && SELECTED_FOLDER=$INPUT_FOLDER
 
 # Set the port of the http server. It defaults to 9000 if left blank. This is 
 # done by default to minimise conflict on http standard ports 80 and 8080.
-read -p "Select the server port: (9000): " SELECTED_PORT && \
-	[ -z "$SELECTED_PORT" ] && SELECTED_PORT=9000
+read -p "Select the server port (9000): " INPUT_PORT
+[ -n "$INPUT_PORT" ] && SELECTED_PORT=$INPUT_PORT
 
-echo "\nStarting Python Web Server\n"
-
-python3 -m http.server $SELECTED_PORT --directory $SELECTED_FOLDER
+start_server
